@@ -27,7 +27,15 @@ def main() -> None:
     line = build_line()
     out_dir = Path("/output")
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "entry.txt").write_text(line, encoding="utf-8")
+    target = out_dir / "entry.txt"
+    target.write_text(line, encoding="utf-8")
+    # Read it back: the graded artifact is the file on disk, so confirm
+    # what was written is exactly the line we meant to submit.
+    written = target.read_text(encoding="utf-8")
+    if written != line:
+        raise ValueError("entry.txt does not match the intended line")
+    if not (1 <= len(written) <= LIMIT):
+        raise ValueError(f"entry.txt must be 1-{LIMIT} chars, got {len(written)}")
     print(line)
 
 
